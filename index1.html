@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kanora</title>
+  <link rel="stylesheet" href="style1.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Chart.js for Analytics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="workspace-logo">
+        <span class="ws-icon">K</span>
+        <div>
+          <p class="ws-name">Kanora</p>
+          <p class="ws-sub">Focus &amp; flow</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item" data-page="board" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Board
+        </a>
+        <a class="nav-item" data-page="tasks" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+          Tasks
+        </a>
+        <a class="nav-item" data-page="calendar" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Calendar
+        </a>
+        <a class="nav-item" data-page="analytics" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Analytics
+        </a>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-progress-block">
+        <p class="sb-label">Sprint progress</p>
+        <div class="sb-bar-bg"><div class="sb-bar-fill" id="sb-progress"></div></div>
+        <p class="sb-pct" id="sb-pct">0% complete</p>
+      </div>
+      <div class="sidebar-avatar">
+        <div class="avatar av-purple">U</div>
+        <div><p class="av-name">You</p><p class="av-role">Developer</p></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <div class="main">
+
+    <!-- ── PAGE: BOARD ── -->
+    <div id="page-board" class="page">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Project Board</h1>
+          <span class="page-tag">Sprint 1</span>
+        </div>
+        <div class="topbar-right">
+          <div class="stats-row">
+            <div class="stat-chip"><span class="chip-dot dot-todo"></span><span id="hdr-todo">0</span> To Do</div>
+            <div class="stat-chip"><span class="chip-dot dot-inprogress"></span><span id="hdr-inprogress">0</span> In Progress</div>
+            <div class="stat-chip"><span class="chip-dot dot-done"></span><span id="hdr-done">0</span> Done</div>
+          </div>
+          <button class="btn-primary" onclick="openModal('todo')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            New Task
+          </button>
+        </div>
+      </header>
+      <div class="board" id="board">
+        <div class="column" id="col-todo" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event,'todo')">
+          <div class="col-head">
+            <div class="col-head-left"><span class="col-dot dot-todo"></span><span class="col-title">To Do</span><span class="col-badge" id="badge-todo">0</span></div>
+            <button class="col-add-btn" onclick="openModal('todo')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div class="cards-area" id="cards-todo"></div>
+        </div>
+        <div class="column" id="col-inprogress" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event,'inprogress')">
+          <div class="col-head">
+            <div class="col-head-left"><span class="col-dot dot-inprogress"></span><span class="col-title">In Progress</span><span class="col-badge" id="badge-inprogress">0</span></div>
+            <button class="col-add-btn" onclick="openModal('inprogress')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div class="cards-area" id="cards-inprogress"></div>
+        </div>
+        <div class="column" id="col-done" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event,'done')">
+          <div class="col-head">
+            <div class="col-head-left"><span class="col-dot dot-done"></span><span class="col-title">Done</span><span class="col-badge" id="badge-done">0</span></div>
+            <button class="col-add-btn" onclick="openModal('done')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div class="cards-area" id="cards-done"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: TASKS ── -->
+    <div id="page-tasks" class="page hidden">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">All Tasks</h1>
+          <span class="page-tag" id="tasks-count-tag">0 tasks</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-primary" onclick="openModal('todo')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            New Task
+          </button>
+        </div>
+      </header>
+      <div class="tasks-page-body">
+        <!-- Filters -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label class="filter-label">Status</label>
+            <select class="filter-select" id="filter-status" onchange="renderTasksPage()">
+              <option value="all">All</option>
+              <option value="todo">To Do</option>
+              <option value="inprogress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Priority</label>
+            <select class="filter-select" id="filter-priority" onchange="renderTasksPage()">
+              <option value="all">All</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Sort by</label>
+            <select class="filter-select" id="filter-sort" onchange="renderTasksPage()">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="priority">Priority</option>
+              <option value="status">Status</option>
+            </select>
+          </div>
+          <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" class="search-input" id="filter-search" placeholder="Search tasks…" oninput="renderTasksPage()"/>
+          </div>
+        </div>
+        <!-- Task list -->
+        <div class="task-list" id="task-list"></div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: CALENDAR ── -->
+    <div id="page-calendar" class="page hidden">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn" onclick="calNav(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h1 class="page-title" id="cal-title">May 2025</h1>
+          <button class="icon-btn" onclick="calNav(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+          <button class="btn-ghost btn-sm" onclick="calToday()">Today</button>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-primary" onclick="openModal('todo')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            New Task
+          </button>
+        </div>
+      </header>
+      <div class="calendar-wrap">
+        <div class="cal-weekdays">
+          <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: ANALYTICS ── -->
+    <div id="page-analytics" class="page hidden">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Analytics</h1>
+          <span class="page-tag">Overview</span>
+        </div>
+      </header>
+      <div class="analytics-body">
+        <!-- Stat cards -->
+        <div class="analytics-stats">
+          <div class="an-card">
+            <p class="an-label">Total Tasks</p>
+            <p class="an-value" id="an-total">0</p>
+            <p class="an-sub">in this sprint</p>
+          </div>
+          <div class="an-card">
+            <p class="an-label">Completed</p>
+            <p class="an-value green" id="an-done">0</p>
+            <p class="an-sub">tasks done</p>
+          </div>
+          <div class="an-card">
+            <p class="an-label">In Progress</p>
+            <p class="an-value blue" id="an-prog">0</p>
+            <p class="an-sub">being worked on</p>
+          </div>
+          <div class="an-card">
+            <p class="an-label">Completion</p>
+            <p class="an-value purple" id="an-pct">0%</p>
+            <p class="an-sub">of all tasks</p>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <p class="chart-title">Tasks by Status</p>
+            <div class="chart-wrap"><canvas id="chart-doughnut"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <p class="chart-title">Tasks by Priority</p>
+            <div class="chart-wrap"><canvas id="chart-priority"></canvas></div>
+          </div>
+          <div class="chart-card chart-wide">
+            <p class="chart-title">Status Breakdown</p>
+            <div class="chart-wrap"><canvas id="chart-bar"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Task completion list -->
+        <div class="an-section">
+          <p class="an-section-title">High Priority Tasks</p>
+          <div id="an-high-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ══ MODAL ══ -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">New Task</h2>
+        <button class="modal-close" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Task name</label>
+          <input type="text" id="task-input" class="form-input" placeholder="e.g. Build the login page…" maxlength="120" autocomplete="off"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Column</label>
+            <select id="column-select" class="form-select">
+              <option value="todo">To Do</option>
+              <option value="inprogress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select id="priority-select" class="form-select">
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Due date (optional)</label>
+          <input type="date" id="date-input" class="form-input"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="addTask()">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="edit-modal-overlay" onclick="closeEditModalOnOverlay(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Edit Task</h2>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+  
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Task name</label>
+          <input type="text" id="edit-task-input" class="form-input" maxlength="120"/>
+        </div>
+      </div>
+  
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeEditModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveEditTask()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script copy.js"></script>
+</body>
+</html>
